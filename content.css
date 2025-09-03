@@ -10,12 +10,13 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  z-index: 10000;
+  z-index: 999999; /* 增加 z-index 以确保在 iframe 中也能显示 */
   opacity: 0;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none; /* 防止阻挡用户交互 */
 }
 
 .alisten-toast.show {

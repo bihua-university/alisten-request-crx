@@ -259,21 +259,87 @@ function replaceShareButtonWithSongButton(shareButton, songId) {
 // 通用UI与请求处理
 // =====================
 function showToast(message, type = "info") {
-  const existingToast = document.querySelector(".alisten-toast");
+  // 获取合适的目标文档
+  const targetDocument = getTargetDocument();
+  const targetBody = targetDocument.body;
+
+  // 如果无法获取有效的 body，使用备用方案
+  if (!targetBody) {
+    showToastFallback(message, type);
+    return;
+  }
+
+  const existingToast = targetDocument.querySelector(".alisten-toast");
   if (existingToast) existingToast.remove();
-  const toast = document.createElement("div");
+
+  const toast = targetDocument.createElement("div");
   toast.className = `alisten-toast alisten-toast-${type}`;
   toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.add("show");
-  }, 10);
-  setTimeout(() => {
-    toast.classList.remove("show");
+
+  try {
+    targetBody.appendChild(toast);
+
     setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 300);
-  }, 3000);
+      toast.classList.add("show");
+    }, 10);
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 3000);
+  } catch (e) {
+    console.error("显示 Toast 失败:", e);
+    // 如果添加到 DOM 失败，使用备用方案
+    showToastFallback(message, type);
+  }
+}
+
+function getTargetDocument() {
+  // 如果在 iframe 中，尝试使用父窗口的文档
+  if (window !== window.parent) {
+    try {
+      // 检查是否可以访问父窗口（同源）
+      if (window.parent.document) {
+        return window.parent.document;
+      }
+    } catch (e) {
+      // 跨域访问被阻止，使用当前文档
+      console.log("无法访问父窗口文档，使用当前iframe文档");
+    }
+  }
+  return document;
+}
+
+// 添加一个备用的消息显示方案
+function showToastFallback(message, type = "info") {
+  // 如果在跨域 iframe 中，尝试通过 postMessage 通知父窗口
+  if (window !== window.parent) {
+    try {
+      window.parent.postMessage(
+        {
+          type: "ALISTEN_SHOW_TOAST",
+          message: message,
+          toastType: type,
+        },
+        "*"
+      );
+    } catch (e) {
+      console.log("无法向父窗口发送消息");
+    }
+  }
+
+  // 同时在当前窗口也显示一个简单的提示
+  console.log(`[AListen] ${type.toUpperCase()}: ${message}`);
+
+  // 可以考虑使用浏览器原生的通知
+  if (window.Notification && Notification.permission === "granted") {
+    new Notification("AListen", {
+      body: message,
+      icon: chrome.runtime.getURL("icon48.png"),
+    });
+  }
 }
 
 async function handleSongRequest(button, requestData, buttonType = "default") {

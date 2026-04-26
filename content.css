@@ -1,22 +1,34 @@
-/* Toast 提示样式 */
+:root {
+  --alisten-accent: #ff7a45;
+  --alisten-accent-strong: #e85b2a;
+  --alisten-accent-soft: #fff1e8;
+  --alisten-success: #0f9d78;
+  --alisten-error: #d94841;
+  --alisten-ink: #1f2937;
+}
+
 .alisten-toast {
   position: fixed;
   top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
+  transform: translateX(-50%) translateY(-18px);
+  min-width: 220px;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(18, 24, 38, 0.9);
+  color: #fff;
   font-size: 14px;
-  font-weight: 500;
-  z-index: 999999; /* 增加 z-index 以确保在 iframe 中也能显示 */
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: center;
+  z-index: 999999;
   opacity: 0;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  pointer-events: none; /* 防止阻挡用户交互 */
+  transition: opacity 0.24s ease, transform 0.24s ease;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.28);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  pointer-events: none;
 }
 
 .alisten-toast.show {
@@ -25,151 +37,209 @@
 }
 
 .alisten-toast-success {
-  background: rgba(0, 200, 83, 0.9);
-  border-color: rgba(0, 255, 136, 0.3);
+  background: rgba(15, 157, 120, 0.92);
+  border-color: rgba(170, 247, 218, 0.3);
 }
 
 .alisten-toast-error {
-  background: rgba(255, 68, 68, 0.9);
-  border-color: rgba(255, 136, 136, 0.3);
+  background: rgba(217, 72, 65, 0.94);
+  border-color: rgba(255, 208, 205, 0.32);
 }
 
 .alisten-toast-info {
-  background: rgba(0, 123, 255, 0.9);
-  border-color: rgba(136, 206, 255, 0.3);
+  background: rgba(31, 41, 55, 0.92);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* 点歌按钮样式 */
 .song-request-btn {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 24px;
-  height: 24px;
+  top: 10px;
+  left: 10px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: none;
-  font-size: 14px;
-  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 241, 232, 0.98) 100%);
+  color: var(--alisten-accent-strong);
+  font-size: 16px;
+  line-height: 1;
   cursor: pointer;
-  transition: all 0.2s ease;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.14);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.song-request-btn::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 122, 69, 0.18);
+  opacity: 0;
+  transition: opacity 0.18s ease;
 }
 
 .song-request-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 16px 28px rgba(255, 122, 69, 0.24);
+}
+
+.song-request-btn:hover::after {
+  opacity: 1;
 }
 
 .song-request-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .song-request-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.82;
   cursor: not-allowed;
   transform: none;
 }
 
 .song-request-btn.success {
-  background: linear-gradient(135deg, #00ff88, #00cc66);
-  color: white;
-  animation: successPulse 0.5s ease-in-out;
-}
-
-.song-request-btn.success:hover {
-  background: linear-gradient(135deg, #00cc66, #00aa55);
+  background: linear-gradient(135deg, #11b78a 0%, #0f9d78 100%);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.26);
+  animation: alisten-success-pulse 0.45s ease-in-out;
 }
 
 .song-request-btn.error {
-  background: linear-gradient(135deg, #ff4444, #cc3333);
-  color: white;
-  animation: errorShake 0.5s ease-in-out;
+  background: linear-gradient(135deg, #ef6a63 0%, #d94841 100%);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.26);
+  animation: alisten-error-shake 0.45s ease-in-out;
 }
 
-.song-request-btn.error:hover {
-  background: linear-gradient(135deg, #cc3333, #aa2222);
+.alisten-inline-action {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 84px;
+  height: 32px;
+  padding: 0 14px !important;
+  border: 1px solid rgba(255, 122, 69, 0.28) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, var(--alisten-accent-soft) 0%, #ffffff 100%) !important;
+  color: var(--alisten-accent-strong) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  box-shadow: 0 10px 18px rgba(255, 122, 69, 0.14);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
-/* 动画效果 */
-@keyframes successPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+.alisten-inline-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 22px rgba(255, 122, 69, 0.2);
+  background: linear-gradient(135deg, #ffe6d6 0%, #ffffff 100%) !important;
 }
 
-@keyframes errorShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
+.alisten-inline-action i {
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
 }
 
-/* 响应式适配 */
+@keyframes alisten-success-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes alisten-error-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  30% {
+    transform: translateX(-2px);
+  }
+
+  70% {
+    transform: translateX(2px);
+  }
+}
+
+.bili-video-card,
+.bili-video-card__info--right {
+  position: relative;
+}
+
 @media (max-width: 768px) {
   .song-request-btn {
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    top: 6px;
-    left: 6px;
+    top: 8px;
+    left: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .alisten-inline-action {
+    min-width: 74px;
+    height: 30px;
+    padding: 0 12px !important;
   }
 }
 
 @media (max-width: 480px) {
   .song-request-btn {
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    top: 4px;
-    left: 4px;
+    top: 6px;
+    left: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .alisten-toast {
+    min-width: 0;
+    width: calc(100vw - 24px);
   }
 }
 
-/* 确保按钮在视频卡片中的位置 */
-.bili-video-card {
-  position: relative;
-}
-
-.bili-video-card__info--right {
-  position: relative;
-}
-
-/* 深色主题适配 */
 @media (prefers-color-scheme: dark) {
   .song-request-btn {
-    background: rgba(32, 32, 32, 0.9);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.96) 0%, rgba(17, 24, 39, 0.92) 100%);
+    color: #ffb48f;
   }
-  
-  .alisten-toast {
-    background: rgba(32, 32, 32, 0.95);
-    border-color: rgba(255, 255, 255, 0.2);
+
+  .alisten-inline-action {
+    border-color: rgba(255, 180, 143, 0.28) !important;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.96) 0%, rgba(17, 24, 39, 0.92) 100%) !important;
+    color: #ffb48f !important;
+  }
+
+  .alisten-inline-action:hover {
+    background: linear-gradient(135deg, rgba(55, 65, 81, 0.98) 0%, rgba(17, 24, 39, 0.96) 100%) !important;
   }
 }
 
-/* 高对比度模式适配 */
 @media (prefers-contrast: high) {
-  .alisten-toast {
-    background: black;
-    border: 2px solid white;
-    color: white;
-  }
-  
-  .alisten-toast-success {
-    background: #008000;
-    border-color: #00ff00;
-  }
-  
-  .alisten-toast-error {
-    background: #800000;
-    border-color: #ff0000;
+  .alisten-toast,
+  .song-request-btn,
+  .alisten-inline-action {
+    box-shadow: none;
+    border-width: 2px !important;
   }
 }

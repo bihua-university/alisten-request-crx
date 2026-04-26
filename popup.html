@@ -8,71 +8,115 @@
 </head>
 <body>
     <div class="popup-container">
-        <div class="header">
-            <h1 class="title">点歌插件设置</h1>
-        </div>
-        
-        <div class="content">
+        <div class="ambient ambient-left"></div>
+        <div class="ambient ambient-right"></div>
+
+        <header class="hero-panel">
+            <div class="hero-copy">
+                <div class="eyebrow">AListen 扩展设置</div>
+                <h1 class="title">点歌配置面板</h1>
+                <p class="subtitle">设置服务器地址、房间信息和平台开关，保存后即可在支持页面直接发起点歌。</p>
+            </div>
+
+            <div class="hero-badges" aria-hidden="true">
+                <span class="hero-badge">Bilibili</span>
+                <span class="hero-badge hero-badge-accent">NetEase</span>
+            </div>
+        </header>
+
+        <main class="content">
             <form id="configForm">
-                <div class="form-group">
-                    <label for="endPoint">服务器地址</label>
-                    <input type="text" id="endPoint" placeholder="例如: https://example.com:8080 或 example.com:8080" required>
-                    <div class="help-text">支持 http:// 或 https:// 前缀，不填写协议默认使用 https://</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="houseId">房间号</label>
-                    <input type="text" id="houseId" placeholder="输入房间号" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="housePwd">房间密码</label>
-                    <input type="password" id="housePwd" placeholder="房间密码（可选）">
-                    <div class="help-text">可留空</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="userName">用户名</label>
-                    <input type="text" id="userName" placeholder="输入你的用户名（可选）">
-                    <div class="help-text">点歌时显示的用户名，可留空</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="userEmail">邮箱</label>
-                    <input type="email" id="userEmail" placeholder="输入你的邮箱（可选）">
-                    <div class="help-text">点歌时的用户邮箱，可留空</div>
-                </div>
-                
-                <div class="form-group">
-                    <label>功能开关</label>
-                    <div class="switch-group">
-                        <div class="switch-item">
+                <section class="form-section">
+                    <div class="section-heading">
+                        <span class="section-kicker">连接配置</span>
+                        <h2>服务器与房间</h2>
+                    </div>
+
+                    <div class="field-stack">
+                        <div class="form-group form-group-wide">
+                            <label for="endPoint">服务器地址</label>
+                            <input type="text" id="endPoint" placeholder="例如 https://example.com:8080 或 example.com:8080" required>
+                            <div class="help-text">不填写协议时会默认补全为 https://</div>
+                        </div>
+
+                        <div class="field-grid">
+                            <div class="form-group">
+                                <label for="houseId">房间号</label>
+                                <input type="text" id="houseId" placeholder="输入房间号" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="housePwd">房间密码</label>
+                                <input type="password" id="housePwd" placeholder="可留空">
+                                <div class="help-text">仅在房间开启鉴权时填写</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="section-heading">
+                        <span class="section-kicker">身份信息</span>
+                        <h2>请求展示资料</h2>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="form-group">
+                            <label for="userName">用户名</label>
+                            <input type="text" id="userName" placeholder="点歌时展示的昵称">
+                            <div class="help-text">可以为空，服务端自行兜底</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userEmail">邮箱</label>
+                            <input type="email" id="userEmail" placeholder="接收方需要时再填写">
+                            <div class="help-text">用于点歌请求附带的联系信息</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="section-heading">
+                        <span class="section-kicker">平台范围</span>
+                        <h2>功能开关</h2>
+                    </div>
+
+                    <div class="switch-grid">
+                        <div class="switch-card">
+                            <div class="switch-copy">
+                                <span class="switch-title">B 站点歌</span>
+                                <span class="switch-description">在视频卡片里注入点歌按钮</span>
+                            </div>
                             <label class="switch">
                                 <input type="checkbox" id="bilibiliEnabled" checked>
                                 <span class="slider"></span>
                             </label>
-                            <span class="switch-label">B站点歌功能</span>
                         </div>
-                        <div class="switch-item">
+
+                        <div class="switch-card">
+                            <div class="switch-copy">
+                                <span class="switch-title">网易云音乐</span>
+                                <span class="switch-description">替换分享入口为点歌操作</span>
+                            </div>
                             <label class="switch">
                                 <input type="checkbox" id="neteaseMusicEnabled" checked>
                                 <span class="slider"></span>
                             </label>
-                            <span class="switch-label">网易云音乐点歌功能</span>
                         </div>
                     </div>
-                </div>
-                
+                </section>
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">保存配置</button>
                     <button type="button" class="btn btn-secondary" id="testBtn">测试连接</button>
                 </div>
             </form>
-        </div>
-        
-        <div class="footer">
+        </main>
+
+        <footer class="footer">
+            <div class="footer-note">配置保存在浏览器同步存储中。</div>
             <div class="version">v1.0.0</div>
-        </div>
+        </footer>
     </div>
     
     <div id="toast" class="toast">

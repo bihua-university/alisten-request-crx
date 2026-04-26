@@ -184,7 +184,7 @@ function processSongPlaylist() {
     // 搜索页面
     // https://music.163.com/#/search/m/?s=mushroom&type=1
     songRows = document.querySelectorAll(
-      "div#m-search div.srchsongst div.item"
+      "div#m-search div.srchsongst div.item",
     );
   }
   console.log("找到", songRows.length, "首歌曲");
@@ -208,7 +208,7 @@ function processSongPlaylistRow(row) {
 function processSongDetailPage() {
   console.log("处理网易云音乐歌曲详情页面");
   const shareButton = document.querySelector(
-    "#content-operation > a.u-btni.u-btni-share"
+    "#content-operation > a.u-btni.u-btni-share",
   );
   if (!shareButton) {
     console.log("未找到分享按钮");
@@ -240,6 +240,7 @@ function extractSongId(row) {
 }
 
 function replaceShareButtonWithSongButton(shareButton, songId) {
+  shareButton.classList.add("alisten-inline-action");
   const iconElement = shareButton.querySelector("i");
   if (iconElement) {
     iconElement.textContent = "点歌";
@@ -323,7 +324,7 @@ function showToastFallback(message, type = "info") {
           message: message,
           toastType: type,
         },
-        "*"
+        "*",
       );
     } catch (e) {
       console.log("无法向父窗口发送消息");

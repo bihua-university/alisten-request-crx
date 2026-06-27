@@ -6,6 +6,7 @@ let globalConfig = {
   neteaseMusicEnabled: true,
 };
 const processedCards = new Set();
+const processedNeteaseShareButtons = new WeakSet();
 
 // =====================
 // 配置相关
@@ -179,30 +180,35 @@ function processNeteaseMusic() {
 function processSongPlaylist() {
   if (window === window.parent) return;
   console.log("处理网易云音乐歌曲列表");
-  let songRows = document.querySelectorAll("table.m-table tbody tr");
+  const songRows = getNeteaseSongRows();
   if (songRows.length === 0) {
-    // 搜索页面
-    // https://music.163.com/#/search/m/?s=mushroom&type=1
-    songRows = document.querySelectorAll(
-      "div#m-search div.srchsongst div.item",
-    );
+    console.log("未找到歌曲列表");
+    return;
   }
   console.log("找到", songRows.length, "首歌曲");
   songRows.forEach((row) => processSongPlaylistRow(row));
 }
 
+function getNeteaseSongRows() {
+  return Array.from(
+    document.querySelectorAll(
+      "table.m-table tbody tr, div#m-search div.srchsongst div.item",
+    ),
+  );
+}
+
 function processSongPlaylistRow(row) {
-  const rowId = getSongRowId(row);
-  if (processedCards.has(rowId)) return;
-  shareButton = row.querySelector(".icn-share");
+  const shareButton = row.querySelector(".icn-share");
   if (!shareButton) {
     console.log("未找到分享按钮，跳过此行");
     return;
   }
-  const songId = extractSongId(row);
+
+  if (processedNeteaseShareButtons.has(shareButton)) return;
+  const songId = extractSongId(row) || shareButton.getAttribute("data-res-id");
   if (!songId) return;
   const success = replaceShareButtonWithSongButton(shareButton, songId);
-  if (success) processedCards.add(rowId);
+  if (success) processedNeteaseShareButtons.add(shareButton);
 }
 
 function processSongDetailPage() {
@@ -226,11 +232,6 @@ function processSongDetailPage() {
   if (success) processedCards.add(detailPageId);
 }
 
-function getSongRowId(row) {
-  const songLink = row.querySelector('a[href*="/song?id="]');
-  return songLink ? songLink.href : row.id || Math.random().toString(36);
-}
-
 function extractSongId(row) {
   const songLink = row.querySelector('a[href*="/song?id="]');
   if (!songLink) return null;
@@ -240,7 +241,8 @@ function extractSongId(row) {
 }
 
 function replaceShareButtonWithSongButton(shareButton, songId) {
-  shareButton.classList.add("alisten-inline-action");
+  shareButton.classList.remove("alisten-inline-action");
+  shareButton.classList.add("alisten-netease-song-action");
   const iconElement = shareButton.querySelector("i");
   if (iconElement) {
     iconElement.textContent = "点歌";
@@ -248,9 +250,15 @@ function replaceShareButtonWithSongButton(shareButton, songId) {
     shareButton.textContent = "点歌";
   }
   shareButton.setAttribute("title", "点歌");
+  shareButton.setAttribute("aria-label", "点歌");
+  shareButton.setAttribute("data-res-action", "alisten-song-request");
+  shareButton.setAttribute("data-alisten-action", "song-request");
   shareButton.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === "function") {
+      e.stopImmediatePropagation();
+    }
     await handleSongRequest(shareButton, { id: songId, source: "wy" });
   });
   return true;
@@ -344,8 +352,9 @@ function showToastFallback(message, type = "info") {
 }
 
 async function handleSongRequest(button, requestData, buttonType = "default") {
+  const isCustomButton = buttonType === "custom";
   try {
-    if (buttonType === "custom") {
+    if (isCustomButton) {
       button.disabled = true;
       button.textContent = "⏳";
       button.classList.remove("success", "error");
@@ -358,7 +367,7 @@ async function handleSongRequest(button, requestData, buttonType = "default") {
     });
     if (response.success) {
       showToast("点歌成功！", "success");
-      if (buttonType === "custom") {
+      if (isCustomButton) {
         button.textContent = "✅";
         button.classList.add("success");
         button.setAttribute("title", response.message || "点歌成功！");
@@ -375,7 +384,7 @@ async function handleSongRequest(button, requestData, buttonType = "default") {
   } catch (error) {
     console.error("点歌请求失败:", error);
     showToast(error.message || "点歌失败，请重试", "error");
-    if (buttonType === "custom") {
+    if (isCustomButton) {
       button.textContent = "❌";
       button.classList.add("error");
       button.setAttribute("title", error.message || "点歌失败");
@@ -387,7 +396,7 @@ async function handleSongRequest(button, requestData, buttonType = "default") {
       }, 2000);
     }
   } finally {
-    if (buttonType !== "custom") {
+    if (!isCustomButton) {
       button.style.pointerEvents = "auto";
     }
   }
